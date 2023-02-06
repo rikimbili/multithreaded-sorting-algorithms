@@ -11,7 +11,7 @@ using namespace spinners;
 const int ARR_SIZE = 100000;
 
 VariadicTable<string, string, string, string, string> vt(
-        {"Sorting Algorithm", "non-concurrent (time)", "2 threads (time)", "4 threads (time)", "8 threads (time)"}, 24);
+        {"Sorting Algorithm", "Time (non-concurrent)", "Time (2 threads)", "Time (4 threads)", "Time (8 threads)"}, 24);
 Spinner *spinner = new Spinner();
 
 int *getArrCopy(const int arr[]) {
@@ -41,11 +41,14 @@ void benchmarkBubbleSort(int arr[]) {
     auto concurrent_time_2 = getBubbleSortTime(arr, 2);
     auto concurrent_time_4 = getBubbleSortTime(arr, 4);
     auto concurrent_time_8 = getBubbleSortTime(arr, 8);
-
+    
     vt.addRow("Bubble Sort", to_string(non_concurrent_time) + "ms",
-              to_string(concurrent_time_2) + "ms",
-              to_string(concurrent_time_4) + "ms",
-              to_string(concurrent_time_8) + "ms");
+              to_string(concurrent_time_2) + "ms (" +
+              to_string((concurrent_time_2 - non_concurrent_time) * 100 / non_concurrent_time) + "%)",
+              to_string(concurrent_time_4) + "ms (" +
+              to_string((concurrent_time_4 - non_concurrent_time) * 100 / non_concurrent_time) + "%)",
+              to_string(concurrent_time_8) + "ms (" +
+              to_string((concurrent_time_8 - non_concurrent_time) * 100 / non_concurrent_time) + "%)");
 
     spinner->stop();
 }
