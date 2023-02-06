@@ -14,7 +14,7 @@ VariadicTable<string, string, string, string, string> vt(
         {"Sorting Algorithm", "non-concurrent (time)", "2 threads (time)", "4 threads (time)", "8 threads (time)"}, 24);
 Spinner *spinner = new Spinner();
 
-int *getArrCopy(int arr[]) {
+int *getArrCopy(const int arr[]) {
     int *arr_copy = new int[ARR_SIZE];
     for (int i = 0; i < ARR_SIZE; i++) {
         arr_copy[i] = arr[i];
@@ -51,9 +51,9 @@ void benchmarkBubbleSort(int arr[]) {
 }
 
 int main() {
+    cout << "\nBenchmarking classic sorting algorithms and their concurrent implementations \n\n";
     spinner->setInterval(100);
     spinner->setSymbols("dots");
-    cout << "Benchmarking classic sorting algorithms and their concurrent implementations \n\n";
 
     // Initialize heap array of size ARR_SIZE with random values
     random_device rd;
