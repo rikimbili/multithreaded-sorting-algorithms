@@ -1,1 +1,1 @@
-# multithreaded-sorting-algorithms
+# Multithreaded Sorting Algorithms
