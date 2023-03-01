@@ -108,6 +108,45 @@ void benchmarkMergeSort(int arr[]) {
     spinner->stop();
 }
 
+
+long getRadixSortTime(int arr[], int num_threads) {
+    auto arr_copy = getArrCopy(arr);
+    // isSorted(arr_copy, "Original array");
+    auto t1 = chrono::high_resolution_clock::now();
+    if (num_threads == 1) { 
+        myRadixSort(arr_copy, 0, ARR_SIZE);
+        isSorted(arr_copy, "Original array with 1 thread");
+    }
+    else { 
+        concurrentRadixSort(arr_copy, ARR_SIZE, num_threads);
+        isSorted(arr_copy, "Original array with " + to_string(num_threads) + " threads");
+    }
+    delete arr_copy;
+    auto t2 = chrono::high_resolution_clock::now();
+    return chrono::duration_cast<chrono::milliseconds>(t2 - t1).count();
+}
+
+void benchmarkRadixSort(int arr[]) {
+    spinner->setText("Benchmarking radix sort...");
+    spinner->start();
+
+    cout << "Benchmarking radix sort..." << endl;
+    auto non_concurrent_time = getRadixSortTime(arr, 1);
+    auto concurrent_time_2 = getRadixSortTime(arr, 2);
+    auto concurrent_time_4 = getRadixSortTime(arr, 4);
+    auto concurrent_time_8 = getRadixSortTime(arr, 8);
+    
+    vt.addRow("Radix Sort", to_string(non_concurrent_time) + "ms",
+              to_string(concurrent_time_2) + "ms (" +
+              to_string((concurrent_time_2 - non_concurrent_time) * 100 / non_concurrent_time) + "%)",
+              to_string(concurrent_time_4) + "ms (" +
+              to_string((concurrent_time_4 - non_concurrent_time) * 100 / non_concurrent_time) + "%)",
+              to_string(concurrent_time_8) + "ms (" +
+              to_string((concurrent_time_8 - non_concurrent_time) * 100 / non_concurrent_time) + "%)");
+
+    spinner->stop();
+}
+
 int main() {
     cout << "\nBenchmarking classic sorting algorithms and their concurrent implementations \n\n";
     spinner->setInterval(100);
