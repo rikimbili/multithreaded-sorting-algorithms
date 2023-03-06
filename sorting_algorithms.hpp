@@ -96,13 +96,17 @@ void bubbleSort(T arr[], int start, int end) {
 template<class T>
 void concurrentBubbleSort(T arr[], int n, int numThreads) {
     vector<thread> threads;
-    int chunk_size = n / numThreads;
 
-    for (int i = 0; i < numThreads; i++) {
+    int chunk_size = (int)floor(n / numThreads);
+
+    for (int i = 0; i < numThreads - 1; i++) {
         int start = i * chunk_size;
-        int end = min(start + chunk_size, n);
+        int end = start + chunk_size;
         threads.emplace_back(bubbleSort<T>, ref(arr), start, end);
     }
+
+    threads.emplace_back(bubbleSort<T>, ref(arr), (numThreads - 1) * chunk_size, n);
+
 
     for (auto &thread: threads) {
         thread.join();
@@ -162,14 +166,17 @@ void radixSort(int arr[], int start, int end) {
 void concurrentRadixSort(int arr[], int n, int numThreads)
 {
     vector<thread> threads;
-    int chunk_size = n / numThreads;
+    // int chunk_size = (n + numThreads - 1) / numThreads;
+    int chunk_size = (int)floor(n / numThreads);
 
-    for (int i = 0; i < numThreads; i++) {
+    for (int i = 0; i < numThreads - 1; i++) {
         int start = i * chunk_size;
         int end = min(start + chunk_size, n);
         threads.emplace_back(radixSort, ref(arr), start, end);
     }
 
+    threads.emplace_back(radixSort, ref(arr), (numThreads - 1) * chunk_size, n);
+    
     for (auto &thread: threads) {
         thread.join();
     }
@@ -184,7 +191,6 @@ void concurrentRadixSort(int arr[], int n, int numThreads)
             merge(arr, left, mid, right);
         }
     }
-
 }
 
 #endif //SORTING_ALGORITHMS_HPP
