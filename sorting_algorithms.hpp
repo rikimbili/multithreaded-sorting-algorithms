@@ -8,53 +8,43 @@ using namespace std;
 
 // Can be parallelized
 template <typename T>
-void merge(T arr[], int start, int mid, int end)
-{
+void merge(T arr[], int start, int mid, int end) {
     int left = start;
     int right = mid + 1;
     int temp[end - start + 1];
     int temp_index = 0;
 
-    while (left <= mid && right <= end)
-    {
-        if (arr[left] < arr[right])
-        {
+    while (left <= mid && right <= end) {
+        if (arr[left] < arr[right]) {
             temp[temp_index] = arr[left];
             left++;
-        }
-        else
-        {
+        } else {
             temp[temp_index] = arr[right];
             right++;
         }
         temp_index++;
     }
 
-    while (left <= mid)
-    {
+    while (left <= mid) {
         temp[temp_index] = arr[left];
         left++;
         temp_index++;
     }
 
-    while (right <= end)
-    {
+    while (right <= end) {
         temp[temp_index] = arr[right];
         right++;
         temp_index++;
     }
 
-    for (int i = start; i <= end; i++)
-    {
+    for (int i = start; i <= end; i++) {
         arr[i] = temp[i - start];
     }
 }
 
-template <class T>
-void mergeSort(T arr[], int start, int end)
-{
-    if (start < end)
-    {
+template<class T>
+void mergeSort(T arr[], int start, int end) {
+    if (start < end) {
         int mid = (start + end) / 2;
         mergeSort(arr, start, mid);
         mergeSort(arr, mid + 1, end);
@@ -64,14 +54,11 @@ void mergeSort(T arr[], int start, int end)
 
 // Assumes that numThreads is a power of 2
 template <typename T>
-void concurrentMergeSort(T arr[], int start, int end, int numThreads)
-{
-    if (start < end)
-    {
+void concurrentMergeSort(T arr[], int start, int end, int numThreads) {
+    if (start < end) {
         int mid = (start + end) / 2;
-
-        if (numThreads > 1)
-        {
+        
+        if (numThreads > 1) {
             vector<thread> threads(2);
 
             int numThreadsLeft = numThreads / 2;
@@ -79,14 +66,11 @@ void concurrentMergeSort(T arr[], int start, int end, int numThreads)
 
             threads[0] = thread(concurrentMergeSort<T>, arr, start, mid, numThreadsLeft);
             threads[1] = thread(concurrentMergeSort<T>, arr, mid + 1, end, numThreadsRight);
-
-            for (auto &thread : threads)
-            {
+            
+            for (auto& thread : threads) {
                 thread.join();
             }
-        }
-        else
-        {
+        } else {
             concurrentMergeSort(arr, start, mid, 1);
             concurrentMergeSort(arr, mid + 1, end, 1);
         }
@@ -95,16 +79,12 @@ void concurrentMergeSort(T arr[], int start, int end, int numThreads)
     }
 }
 
-template <class T>
-void bubbleSort(T arr[], int start, int end)
-{
+template<class T>
+void bubbleSort(T arr[], int start, int end) {
     int n = end - start + 1;
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = start; j < end - i - 1; j++)
-        {
-            if (arr[j] > arr[j + 1])
-            {
+    for (int i = 0; i < n; i++) {
+        for (int j = start; j < end - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
                 T temp = arr[j];
                 arr[j] = arr[j + 1];
                 arr[j + 1] = temp;
@@ -113,15 +93,13 @@ void bubbleSort(T arr[], int start, int end)
     }
 }
 
-template <class T>
-void concurrentBubbleSort(T arr[], int n, int numThreads)
-{
+template<class T>
+void concurrentBubbleSort(T arr[], int n, int numThreads) {
     vector<thread> threads;
 
     int chunk_size = (int)floor(n / numThreads);
 
-    for (int i = 0; i < numThreads - 1; i++)
-    {
+    for (int i = 0; i < numThreads - 1; i++) {
         int start = i * chunk_size;
         int end = start + chunk_size;
         threads.emplace_back(bubbleSort<T>, ref(arr), start, end);
@@ -129,17 +107,15 @@ void concurrentBubbleSort(T arr[], int n, int numThreads)
 
     threads.emplace_back(bubbleSort<T>, ref(arr), (numThreads - 1) * chunk_size, n);
 
-    for (auto &thread : threads)
-    {
+
+    for (auto &thread: threads) {
         thread.join();
     }
 
     // Similar to merging in merge sort, but we merge chunks of size chunk_size
     // Doubles the size of the chunks each iteration
-    for (int size = chunk_size; size < n; size *= 2)
-    {
-        for (int i = 0; i < n - size; i += 2 * size)
-        {
+    for (int size = chunk_size; size < n; size *= 2) {
+        for (int i = 0; i < n - size; i += 2 * size) {
             int left = i;
             int mid = i + size - 1;
             int right = min(i + 2 * size - 1, n - 1);
@@ -148,79 +124,66 @@ void concurrentBubbleSort(T arr[], int n, int numThreads)
     }
 }
 
-void radixSort(int arr[], int start, int end)
-{
+void radixSort(int arr[], int start, int end) {
     // Get max element in array
     int max = arr[start];
-    for (int i = start + 1; i <= end; i++)
-    {
-        if (arr[i] > max)
-        {
+    for (int i = start + 1; i <= end; i++) {
+        if (arr[i] > max) {
             max = arr[i];
         }
     }
 
     int n = end - start;
     // Iterate through all digits of max element
-    for (int exp = 1; max / exp > 0; exp *= 10)
-    {
+    for (int exp = 1; max / exp > 0; exp *= 10) {
         int output[n];
         int count[10] = {0};
 
         // Count the number of elements with each digit
-        for (int i = start; i < end; i++)
-        {
+        for (int i = start; i < end; i++) {
             int digit = (arr[i] / exp) % 10;
             count[digit]++;
         }
 
         // Cumulative sum of count array
-        for (int i = 1; i < 10; i++)
-        {
+        for (int i = 1; i < 10; i++) {
             count[i] += count[i - 1];
         }
 
-        for (int i = end - 1; i >= start; i--)
-        {
+        for (int i = end - 1; i >= start; i--) {
             int digit = (arr[i] / exp) % 10;
             output[count[digit] - 1] = arr[i];
             count[digit]--;
         }
 
         // Copy output array to arr
-        for (int i = start; i < end; i++)
-        {
+        for (int i = start; i < end; i++) {
             arr[i] = output[i - start];
         }
     }
 }
 
-void concurrentRadixSort(int arr[], int n, int numThreads)
-{
+void concurrentRadixSort(int arr[], int n, int numThreads) {
     vector<thread> threads;
     // int chunk_size = (n + numThreads - 1) / numThreads;
     int chunk_size = (int)floor(n / numThreads);
 
-    for (int i = 0; i < numThreads - 1; i++)
-    {
+    for (int i = 0; i < numThreads - 1; i++) {
         int start = i * chunk_size;
         int end = min(start + chunk_size, n);
         threads.emplace_back(radixSort, ref(arr), start, end);
     }
 
     threads.emplace_back(radixSort, ref(arr), (numThreads - 1) * chunk_size, n);
-
-    for (auto &thread : threads)
-    {
+    
+    for (auto &thread: threads) {
         thread.join();
     }
 
     // Similar to merging in merge sort, but we merge chunks of size chunk_size
     // Doubles the size of the chunks each iteration
-    for (int size = chunk_size; size < n; size *= 2)
-    {
-        for (int i = 0; i < n - size; i += 2 * size)
-        {
+    for (int size = chunk_size; size < n; size *= 2) {
+        for (int i = 0; i < n - size; i += 2 * size) {
             int left = i;
             int mid = i + size - 1;
             int right = min(i + 2 * size - 1, n - 1);
@@ -228,19 +191,15 @@ void concurrentRadixSort(int arr[], int n, int numThreads)
         }
     }
 }
-
-void insertionSort(int arr[], int start, int end)
-{
+void insertionSort(int arr[], int start, int end) {
     int i, key, j;
-    for (i = start + 1; i <= end; i++)
-    {
+    for (i = start + 1; i <= end; i++) {
         key = arr[i];
         j = i - 1;
 
-        // Move elements of arr[start..i-1], that are greater than key, 
+        // Move elements of arr[start..i-1], that are greater than key,
         // to one position ahead of their current position
-        while (j >= start && arr[j] > key)
-        {
+        while (j >= start && arr[j] > key) {
             arr[j + 1] = arr[j];
             j = j - 1;
         }
@@ -248,25 +207,21 @@ void insertionSort(int arr[], int start, int end)
     }
 }
 
-void concurrentInsertionSort(int arr[], int n, int num_threads)
-{
+void concurrentInsertionSort(int arr[], int n, int num_threads) {
     vector<thread> threads;
     int chunk_size = n / num_threads;
     int start = 0;
     int end = chunk_size;
-    for (int i = 0; i < num_threads; i++)
-    {
+    for (int i = 0; i < num_threads; i++) {
         threads.emplace_back(insertionSort, ref(arr), start, end - 1);
         start = end;
         end = min(end + chunk_size, n);
     }
 
-    for (auto &thread : threads)
-    {
+    for (auto &thread : threads) {
         thread.join();
     }
-    for (int i = 1; i < num_threads; i++)
-    {
+    for (int i = 1; i < num_threads; i++) {
         int mid = i * chunk_size - 1;
         int right = min((i + 1) * chunk_size - 1, n - 1);
         merge(arr, 0, mid, right);
@@ -274,3 +229,4 @@ void concurrentInsertionSort(int arr[], int n, int num_threads)
 }
 
 #endif //SORTING_ALGORITHMS_HPP
+
