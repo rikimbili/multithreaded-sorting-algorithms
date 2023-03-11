@@ -221,6 +221,63 @@ void benchmarkRadixSort(int arr[], int arrSize) {
     spinner->stop();
 }
 
+sortData getInsertionSortData(int arr[], int arrSize, int numThreads) {
+    sortData data;
+    auto arr_copy = getArrCopy(arr, arrSize);
+    struct rusage startUsage, endUsage;
+    
+    getrusage(RUSAGE_SELF, &startUsage);
+    auto t1 = chrono::high_resolution_clock::now();
+
+    if (numThreads == 1) { 
+        insertionSort(arr_copy, 0, arrSize-1);
+        isSorted(arr_copy, arrSize, "Array with 1 thread");
+    }
+    else { 
+        concurrentInsertionSort(arr_copy, arrSize, numThreads);
+        isSorted(arr_copy, arrSize, "Array with " + to_string(numThreads) + " threads");
+    }
+
+    auto t2 = chrono::high_resolution_clock::now();
+    getrusage(RUSAGE_SELF, &endUsage);
+    
+    delete arr_copy;
+
+    data.cpuUsage = calculateCpuUsage(startUsage, endUsage, chrono::duration_cast<chrono::duration<double>>(t2 - t1).count());
+    data.sortTime = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+    return data;
+}
+
+void benchmarkInsertionSort(int arr[], int arrSize) {
+    spinner->setText("Benchmarking insertion sort...");
+    spinner->start();
+
+    cout << "Benchmarking insertion sort..." << endl;
+
+    sortData oneThread = getInsertionSortData(arr, arrSize, 1);
+    sortingData << "Insertion Sort," << arrSize << "," << oneThread.sortTime << "," << oneThread.cpuUsage << "," << "1" << endl;
+    sortData twoThreads = getInsertionSortData(arr, arrSize, 2);
+    sortingData << "Insertion Sort," << arrSize << "," << twoThreads.sortTime << "," << twoThreads.cpuUsage << "," << "2" << endl;
+    sortData fourThreads = getInsertionSortData(arr, arrSize, 4);
+    sortingData << "Insertion Sort," << arrSize << "," << fourThreads.sortTime << "," << fourThreads.cpuUsage << "," << "4" << endl;
+    sortData eightThreads = getInsertionSortData(arr, arrSize, 8);
+    sortingData << "Insertion Sort," << arrSize << "," << eightThreads.sortTime << "," << eightThreads.cpuUsage << "," << "8" << endl;
+    
+    vt.addRow("Insertion Sort", to_string(arrSize), 
+              to_string(oneThread.sortTime) + "μs",
+              to_string(oneThread.cpuUsage) + "%",
+              to_string(twoThreads.sortTime) + "μs (" + to_string((twoThreads.sortTime - oneThread.sortTime) * 100 / oneThread.sortTime) + "%)",
+              to_string(twoThreads.cpuUsage) + "%",
+              to_string(fourThreads.sortTime) + "μs (" + to_string((fourThreads.sortTime - oneThread.sortTime) * 100 / oneThread.sortTime) + "%)",
+              to_string(fourThreads.cpuUsage) + "%",
+              to_string(eightThreads.sortTime) + "μs (" + to_string((eightThreads.sortTime - oneThread.sortTime) * 100 / oneThread.sortTime) + "%)",
+              to_string(eightThreads.cpuUsage) + "%");
+
+    spinner->stop();
+}
+
+
+
 int main() {
     cout << "\nBenchmarking classic sorting algorithms and their concurrent implementations \n\n";
     spinner->setInterval(100);
@@ -255,6 +312,7 @@ int main() {
         benchmarkBubbleSort(arr, arrSize);
         benchmarkMergeSort(arr, arrSize);
         benchmarkRadixSort(arr, arrSize);
+        benchmarkInsertionSort(arr, arrSize);
     }
 
     vt.print(cout);
