@@ -12,29 +12,29 @@ void merge(T arr[], int start, int mid, int end) {
     int left = start;
     int right = mid + 1;
     int temp[end - start + 1];
-    int temp_index = 0;
+    int tempIndex = 0;
 
     while (left <= mid && right <= end) {
         if (arr[left] < arr[right]) {
-            temp[temp_index] = arr[left];
+            temp[tempIndex] = arr[left];
             left++;
         } else {
-            temp[temp_index] = arr[right];
+            temp[tempIndex] = arr[right];
             right++;
         }
-        temp_index++;
+        tempIndex++;
     }
 
     while (left <= mid) {
-        temp[temp_index] = arr[left];
+        temp[tempIndex] = arr[left];
         left++;
-        temp_index++;
+        tempIndex++;
     }
 
     while (right <= end) {
-        temp[temp_index] = arr[right];
+        temp[tempIndex] = arr[right];
         right++;
-        temp_index++;
+        tempIndex++;
     }
 
     for (int i = start; i <= end; i++) {
@@ -97,15 +97,15 @@ template<class T>
 void concurrentBubbleSort(T arr[], int n, int numThreads) {
     vector<thread> threads;
 
-    int chunk_size = (int)floor(n / numThreads);
+    int chunkSize = (int)floor(n / numThreads);
 
     for (int i = 0; i < numThreads - 1; i++) {
-        int start = i * chunk_size;
-        int end = start + chunk_size;
+        int start = i * chunkSize;
+        int end = start + chunkSize;
         threads.emplace_back(bubbleSort<T>, ref(arr), start, end);
     }
 
-    threads.emplace_back(bubbleSort<T>, ref(arr), (numThreads - 1) * chunk_size, n);
+    threads.emplace_back(bubbleSort<T>, ref(arr), (numThreads - 1) * chunkSize, n);
 
 
     for (auto &thread: threads) {
@@ -114,7 +114,7 @@ void concurrentBubbleSort(T arr[], int n, int numThreads) {
 
     // Similar to merging in merge sort, but we merge chunks of size chunk_size
     // Doubles the size of the chunks each iteration
-    for (int size = chunk_size; size < n; size *= 2) {
+    for (int size = chunkSize; size < n; size *= 2) {
         for (int i = 0; i < n - size; i += 2 * size) {
             int left = i;
             int mid = i + size - 1;
@@ -165,24 +165,24 @@ void radixSort(int arr[], int start, int end) {
 
 void concurrentRadixSort(int arr[], int n, int numThreads) {
     vector<thread> threads;
-    // int chunk_size = (n + numThreads - 1) / numThreads;
-    int chunk_size = (int)floor(n / numThreads);
+
+    int chunkSize = (int)floor(n / numThreads);
 
     for (int i = 0; i < numThreads - 1; i++) {
-        int start = i * chunk_size;
-        int end = min(start + chunk_size, n);
+        int start = i * chunkSize;
+        int end = min(start + chunkSize, n);
         threads.emplace_back(radixSort, ref(arr), start, end);
     }
 
-    threads.emplace_back(radixSort, ref(arr), (numThreads - 1) * chunk_size, n);
+    threads.emplace_back(radixSort, ref(arr), (numThreads - 1) * chunkSize, n);
     
     for (auto &thread: threads) {
         thread.join();
     }
 
-    // Similar to merging in merge sort, but we merge chunks of size chunk_size
+    // Similar to merging in merge sort, but we merge chunks of size chunkSize
     // Doubles the size of the chunks each iteration
-    for (int size = chunk_size; size < n; size *= 2) {
+    for (int size = chunkSize; size < n; size *= 2) {
         for (int i = 0; i < n - size; i += 2 * size) {
             int left = i;
             int mid = i + size - 1;
@@ -209,20 +209,105 @@ void insertionSort(int arr[], int start, int end) {
 
 void concurrentInsertionSort(int arr[], int n, int num_threads) {
     vector<thread> threads;
-    int chunk_size = (int)floor(n / num_threads);
+    int chunkSize = (int)floor(n / num_threads);
     for (int i = 0; i < num_threads-1; i++) {
-        int start = i * chunk_size;
-        int end = min(start + chunk_size, n);
-        threads.emplace_back(insertionSort, ref(arr), start, end-1);
+        int start = i * chunkSize;
+        int end = min(start + chunkSize, n);
+        threads.emplace_back(insertionSort, ref(arr), start, end - 1);
     }
 
-    threads.emplace_back(insertionSort, ref(arr), (num_threads - 1) * chunk_size, n-1);    
+    threads.emplace_back(insertionSort, ref(arr), (num_threads - 1) * chunkSize, n-1);    
     for (auto &thread : threads) {
         thread.join();
     }
-      // Similar to merging in merge sort, but we merge chunks of size chunk_size
+      // Similar to merging in merge sort, but we merge chunks of size chunkSize
     // Doubles the size of the chunks each iteration
-    for (int size = chunk_size; size < n; size *= 2) {
+    for (int size = chunkSize; size < n; size *= 2) {
+        for (int i = 0; i < n - size; i += 2 * size) {
+            int left = i;
+            int mid = i + size - 1;
+            int right = min(i + 2 * size - 1, n - 1);
+            merge(arr, left, mid, right);
+        }
+    }
+}
+
+int partition(int arr[], int start, int end) {
+    int pivot = arr[end];
+    int i = start - 1;
+    for (int j = start; j <= end - 1; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[end]);
+    return i + 1;
+}
+
+void quickSort(int arr[], int start, int end) {
+    if (start < end) {
+        int pivot = partition(arr, start, end);
+        quickSort(arr, start, pivot - 1);
+        quickSort(arr, pivot + 1, end);
+    }
+}
+
+void concurrentQuickSort(int arr[], int n, int numThreads) {
+    vector<thread> threads;
+    int chunkSize = (int)floor(n / numThreads);
+    for (int i = 0; i < numThreads - 1; i++) {
+        int start = i * chunkSize;
+        int end = min(start + chunkSize, n);
+        threads.emplace_back(quickSort, ref(arr), start, end - 1);
+    }
+
+    threads.emplace_back(quickSort, ref(arr), (numThreads - 1) * chunkSize, n - 1);
+    for (auto &thread : threads) {
+        thread.join();
+    }
+
+    // Similar to merging in merge sort, but we merge chunks of size chunkSize
+    // Doubles the size of the chunks each iteration
+    for (int size = chunkSize; size < n; size *= 2) {
+        for (int i = 0; i < n - size; i += 2 * size) {
+            int left = i;
+            int mid = i + size - 1;
+            int right = min(i + 2 * size - 1, n - 1);
+            merge(arr, left, mid, right);
+        }
+    }
+}
+
+void selectionSort(int arr[], int start, int end) {
+    for (int i = start; i <= end; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j <= end; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+        swap(arr[minIndex], arr[i]);
+    }
+}
+
+void concurrentSelectionSort(int arr[], int n, int numThreads) {
+    vector<thread> threads;
+    int chunkSize = (int)floor(n / numThreads);
+    for (int i = 0; i < numThreads - 1; i++) {
+        int start = i * chunkSize;
+        int end = min(start + chunkSize, n);
+        threads.emplace_back(selectionSort, ref(arr), start, end - 1);
+    }
+
+    threads.emplace_back(selectionSort, ref(arr), (numThreads - 1) * chunkSize, n - 1);
+    for (auto &thread : threads) {
+        thread.join();
+    }
+
+    // Similar to merging in merge sort, but we merge chunks of size chunkSize
+    // Doubles the size of the chunks each iteration
+    for (int size = chunkSize; size < n; size *= 2) {
         for (int i = 0; i < n - size; i += 2 * size) {
             int left = i;
             int mid = i + size - 1;

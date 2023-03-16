@@ -25,11 +25,11 @@ typedef struct sortData {
 } sortData;
 
 int *getArrCopy(const int arr[], int arrSize) {
-    int *arr_copy = new int[arrSize];
+    int *arrCopy = new int[arrSize];
     for (int i = 0; i < arrSize; i++) {
-        arr_copy[i] = arr[i];
+        arrCopy[i] = arr[i];
     }
-    return arr_copy;
+    return arrCopy;
 }
 
 // Mainly for debugging purposes
@@ -58,25 +58,25 @@ double calculateCpuUsage(struct rusage startUsage, struct rusage endUsage, doubl
 
 sortData getBubbleSortData(int arr[], int arrSize, int numThreads) {
     sortData data;
-    auto arr_copy = getArrCopy(arr, arrSize);
+    auto arrCopy = getArrCopy(arr, arrSize);
     struct rusage startUsage, endUsage;
 
     getrusage(RUSAGE_SELF, &startUsage);
     auto t1 = chrono::high_resolution_clock::now();
     
     if (numThreads == 1) { 
-        bubbleSort(arr_copy, 0, arrSize);
-        isSorted(arr_copy, arrSize, "Array with 1 thread");
+        bubbleSort(arrCopy, 0, arrSize);
+        isSorted(arrCopy, arrSize, "Array with 1 thread");
     }
     else { 
-        concurrentBubbleSort(arr_copy, arrSize, numThreads);
-        isSorted(arr_copy, arrSize, "Array with " + to_string(numThreads) + " threads");
+        concurrentBubbleSort(arrCopy, arrSize, numThreads);
+        isSorted(arrCopy, arrSize, "Array with " + to_string(numThreads) + " threads");
     }
     
     auto t2 = chrono::high_resolution_clock::now();
     getrusage(RUSAGE_SELF, &endUsage);
     
-    delete arr_copy;
+    delete arrCopy;
 
     data.cpuUsage = calculateCpuUsage(startUsage, endUsage, chrono::duration_cast<chrono::duration<double>>(t2 - t1).count());
     data.sortTime = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
@@ -113,25 +113,25 @@ void benchmarkBubbleSort(int arr[], int arrSize) {
 
 sortData getMergeSortData(int arr[], int arrSize, int numThreads) {
     sortData data;
-    auto arr_copy = getArrCopy(arr, arrSize);
+    auto arrCopy = getArrCopy(arr, arrSize);
     struct rusage startUsage, endUsage;
 
     getrusage(RUSAGE_SELF, &startUsage); 
     auto t1 = chrono::high_resolution_clock::now();
 
     if (numThreads == 1) { 
-        mergeSort(arr_copy, 0, arrSize - 1); 
-        isSorted(arr_copy, arrSize, "Array with 1 thread");
+        mergeSort(arrCopy, 0, arrSize - 1); 
+        isSorted(arrCopy, arrSize, "Array with 1 thread");
     }
     else { 
-        concurrentMergeSort(arr_copy, 0, arrSize - 1, numThreads);
-        isSorted(arr_copy, arrSize, "Array with " + to_string(numThreads) + " threads"); 
+        concurrentMergeSort(arrCopy, 0, arrSize - 1, numThreads);
+        isSorted(arrCopy, arrSize, "Array with " + to_string(numThreads) + " threads"); 
     }
 
     auto t2 = chrono::high_resolution_clock::now();
     getrusage(RUSAGE_SELF, &endUsage);
 
-    delete arr_copy;
+    delete arrCopy;
  
     data.cpuUsage = calculateCpuUsage(startUsage, endUsage, chrono::duration_cast<chrono::duration<double>>(t2 - t1).count());
     data.sortTime = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
@@ -168,25 +168,25 @@ void benchmarkMergeSort(int arr[], int arrSize) {
 
 sortData getRadixSortData(int arr[], int arrSize, int numThreads) {
     sortData data;
-    auto arr_copy = getArrCopy(arr, arrSize);
+    auto arrCopy = getArrCopy(arr, arrSize);
     struct rusage startUsage, endUsage;
     
     getrusage(RUSAGE_SELF, &startUsage);
     auto t1 = chrono::high_resolution_clock::now();
 
     if (numThreads == 1) { 
-        radixSort(arr_copy, 0, arrSize);
-        isSorted(arr_copy, arrSize, "Array with 1 thread");
+        radixSort(arrCopy, 0, arrSize);
+        isSorted(arrCopy, arrSize, "Array with 1 thread");
     }
     else { 
-        concurrentRadixSort(arr_copy, arrSize, numThreads);
-        isSorted(arr_copy, arrSize, "Array with " + to_string(numThreads) + " threads");
+        concurrentRadixSort(arrCopy, arrSize, numThreads);
+        isSorted(arrCopy, arrSize, "Array with " + to_string(numThreads) + " threads");
     }
 
     auto t2 = chrono::high_resolution_clock::now();
     getrusage(RUSAGE_SELF, &endUsage);
     
-    delete arr_copy;
+    delete arrCopy;
 
     data.cpuUsage = calculateCpuUsage(startUsage, endUsage, chrono::duration_cast<chrono::duration<double>>(t2 - t1).count());
     data.sortTime = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
@@ -223,25 +223,25 @@ void benchmarkRadixSort(int arr[], int arrSize) {
 
 sortData getInsertionSortData(int arr[], int arrSize, int numThreads) {
     sortData data;
-    auto arr_copy = getArrCopy(arr, arrSize);
+    auto arrCopy = getArrCopy(arr, arrSize);
     struct rusage startUsage, endUsage;
     
     getrusage(RUSAGE_SELF, &startUsage);
     auto t1 = chrono::high_resolution_clock::now();
 
     if (numThreads == 1) { 
-        insertionSort(arr_copy, 0, arrSize-1);
-        isSorted(arr_copy, arrSize, "Array with 1 thread");
+        insertionSort(arrCopy, 0, arrSize-1);
+        isSorted(arrCopy, arrSize, "Array with 1 thread");
     }
     else { 
-        concurrentInsertionSort(arr_copy, arrSize, numThreads);
-        isSorted(arr_copy, arrSize, "Array with " + to_string(numThreads) + " threads");
+        concurrentInsertionSort(arrCopy, arrSize, numThreads);
+        isSorted(arrCopy, arrSize, "Array with " + to_string(numThreads) + " threads");
     }
 
     auto t2 = chrono::high_resolution_clock::now();
     getrusage(RUSAGE_SELF, &endUsage);
     
-    delete arr_copy;
+    delete arrCopy;
 
     data.cpuUsage = calculateCpuUsage(startUsage, endUsage, chrono::duration_cast<chrono::duration<double>>(t2 - t1).count());
     data.sortTime = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
@@ -276,7 +276,115 @@ void benchmarkInsertionSort(int arr[], int arrSize) {
     spinner->stop();
 }
 
+sortData getQuickSortData(int arr[], int arrSize, int numThreads) {
+    sortData data;
+    auto arrCopy = getArrCopy(arr, arrSize);
+    struct rusage startUsage, endUsage;
+    
+    getrusage(RUSAGE_SELF, &startUsage);
+    auto t1 = chrono::high_resolution_clock::now();
 
+    if (numThreads == 1) { 
+        quickSort(arrCopy, 0, arrSize - 1);
+        isSorted(arrCopy, arrSize, "Array with 1 thread");
+    }
+    else { 
+        concurrentQuickSort(arrCopy, arrSize, numThreads);
+        isSorted(arrCopy, arrSize, "Array with " + to_string(numThreads) + " threads");
+    }
+
+    auto t2 = chrono::high_resolution_clock::now();
+    getrusage(RUSAGE_SELF, &endUsage);
+    
+    delete arrCopy;
+
+    data.cpuUsage = calculateCpuUsage(startUsage, endUsage, chrono::duration_cast<chrono::duration<double>>(t2 - t1).count());
+    data.sortTime = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+    return data;
+}
+
+void benchmarkQuickSort(int arr[], int arrSize) {
+    spinner->setText("Benchmarking quick sort...");
+    spinner->start();
+
+    cout << "Benchmarking quick sort..." << endl;
+
+    sortData oneThread = getQuickSortData(arr, arrSize, 1);
+    sortingData << "Quick Sort," << arrSize << "," << oneThread.sortTime << "," << oneThread.cpuUsage << "," << "1" << endl;
+    sortData twoThreads = getQuickSortData(arr, arrSize, 2);
+    sortingData << "Quick Sort," << arrSize << "," << twoThreads.sortTime << "," << twoThreads.cpuUsage << "," << "2" << endl;
+    sortData fourThreads = getQuickSortData(arr, arrSize, 4);
+    sortingData << "Quick Sort," << arrSize << "," << fourThreads.sortTime << "," << fourThreads.cpuUsage << "," << "4" << endl;
+    sortData eightThreads = getQuickSortData(arr, arrSize, 8);
+    sortingData << "Quick Sort," << arrSize << "," << eightThreads.sortTime << "," << eightThreads.cpuUsage << "," << "8" << endl;
+    
+    vt.addRow("Quick Sort", to_string(arrSize), 
+              to_string(oneThread.sortTime) + "μs",
+              to_string(oneThread.cpuUsage) + "%",
+              to_string(twoThreads.sortTime) + "μs (" + to_string((twoThreads.sortTime - oneThread.sortTime) * 100 / oneThread.sortTime) + "%)",
+              to_string(twoThreads.cpuUsage) + "%",
+              to_string(fourThreads.sortTime) + "μs (" + to_string((fourThreads.sortTime - oneThread.sortTime) * 100 / oneThread.sortTime) + "%)",
+              to_string(fourThreads.cpuUsage) + "%",
+              to_string(eightThreads.sortTime) + "μs (" + to_string((eightThreads.sortTime - oneThread.sortTime) * 100 / oneThread.sortTime) + "%)",
+              to_string(eightThreads.cpuUsage) + "%");
+
+    spinner->stop();
+}
+
+sortData getSelectionSortData(int arr[], int arrSize, int numThreads) {
+    sortData data;
+    auto arrCopy = getArrCopy(arr, arrSize);
+    struct rusage startUsage, endUsage;
+    
+    getrusage(RUSAGE_SELF, &startUsage);
+    auto t1 = chrono::high_resolution_clock::now();
+
+    if (numThreads == 1) { 
+        selectionSort(arrCopy, 0, arrSize - 1);
+        isSorted(arrCopy, arrSize, "Array with 1 thread");
+    }
+    else { 
+        concurrentSelectionSort(arrCopy, arrSize, numThreads);
+        isSorted(arrCopy, arrSize, "Array with " + to_string(numThreads) + " threads");
+    }
+
+    auto t2 = chrono::high_resolution_clock::now();
+    getrusage(RUSAGE_SELF, &endUsage);
+    
+    delete arrCopy;
+
+    data.cpuUsage = calculateCpuUsage(startUsage, endUsage, chrono::duration_cast<chrono::duration<double>>(t2 - t1).count());
+    data.sortTime = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+    return data;
+}
+
+void benchmarkSelectionSort(int arr[], int arrSize) {
+    spinner->setText("Benchmarking selection sort...");
+    spinner->start();
+
+    cout << "Benchmarking selection sort..." << endl;
+
+    sortData oneThread = getSelectionSortData(arr, arrSize, 1);
+    sortingData << "Selection Sort," << arrSize << "," << oneThread.sortTime << "," << oneThread.cpuUsage << "," << "1" << endl;
+    sortData twoThreads = getSelectionSortData(arr, arrSize, 2);
+    sortingData << "Selection Sort," << arrSize << "," << twoThreads.sortTime << "," << twoThreads.cpuUsage << "," << "2" << endl;
+    sortData fourThreads = getSelectionSortData(arr, arrSize, 4);
+    sortingData << "Selection Sort," << arrSize << "," << fourThreads.sortTime << "," << fourThreads.cpuUsage << "," << "4" << endl;
+    sortData eightThreads = getSelectionSortData(arr, arrSize, 8);
+    sortingData << "Selection Sort," << arrSize << "," << eightThreads.sortTime << "," << eightThreads.cpuUsage << "," << "8" << endl;
+    
+    vt.addRow("Selection Sort", to_string(arrSize), 
+              to_string(oneThread.sortTime) + "μs",
+              to_string(oneThread.cpuUsage) + "%",
+              to_string(twoThreads.sortTime) + "μs (" + to_string((twoThreads.sortTime - oneThread.sortTime) * 100 / oneThread.sortTime) + "%)",
+              to_string(twoThreads.cpuUsage) + "%",
+              to_string(fourThreads.sortTime) + "μs (" + to_string((fourThreads.sortTime - oneThread.sortTime) * 100 / oneThread.sortTime) + "%)",
+              to_string(fourThreads.cpuUsage) + "%",
+              to_string(eightThreads.sortTime) + "μs (" + to_string((eightThreads.sortTime - oneThread.sortTime) * 100 / oneThread.sortTime) + "%)",
+              to_string(eightThreads.cpuUsage) + "%");
+
+    spinner->stop();
+}
 
 int main() {
     cout << "\nBenchmarking classic sorting algorithms and their concurrent implementations \n\n";
@@ -284,7 +392,7 @@ int main() {
     spinner->setSymbols("dots");
 
     // int arraySizes[] = { 10, 100, 1000, 10000, 100000, 1000000 };
-    int arraySizes[] = { 10, 100, 1000, 10000, 100000 };
+    // int arraySizes[] = { 10, 100, 1000, 10000, 100000 };
     // int arraySizes[] = { 100000, 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000 };
     // int arraySizes[] = { 100000 };
     // int arraySizes[] = { 10, 100, 1000, 10000, 100000, 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000, 250000, 500000, 750000, 1000000};
@@ -295,10 +403,10 @@ int main() {
     mt19937 gen(rd());
     uniform_int_distribution<> dis(0, 100000);
 
-    // int arraySizes[10];
-    // for (int i = 0; i < 10; i++) {
-    //     arraySizes[i] = dis(gen);
-    // }
+    int arraySizes[10];
+    for (int i = 0; i < 10; i++) {
+        arraySizes[i] = dis(gen);
+    }
 
     sortingData.open("sortingData.csv");
     sortingData << "Sort Name,Array Size,Time Taken,CPU Usage,Number of Threads Used" << endl;
@@ -313,6 +421,8 @@ int main() {
         benchmarkMergeSort(arr, arrSize);
         benchmarkRadixSort(arr, arrSize);
         benchmarkInsertionSort(arr, arrSize);
+        benchmarkQuickSort(arr, arrSize);
+        benchmarkSelectionSort(arr, arrSize);
     }
 
     vt.print(cout);
