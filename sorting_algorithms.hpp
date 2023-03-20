@@ -7,7 +7,7 @@
 using namespace std;
 
 // Can be parallelized
-template <typename T>
+template <class T>
 void merge(T arr[], int start, int mid, int end) {
     int left = start;
     int right = mid + 1;
@@ -53,7 +53,7 @@ void mergeSort(T arr[], int start, int end) {
 }
 
 // Assumes that numThreads is a power of 2
-template <typename T>
+template <class T>
 void concurrentMergeSort(T arr[], int start, int end, int numThreads) {
     if (start < end) {
         int mid = (start + end) / 2;

@@ -230,7 +230,7 @@ sortData getInsertionSortData(int arr[], int arrSize, int numThreads) {
     auto t1 = chrono::high_resolution_clock::now();
 
     if (numThreads == 1) { 
-        insertionSort(arrCopy, 0, arrSize-1);
+        insertionSort(arrCopy, 0, arrSize - 1);
         isSorted(arrCopy, arrSize, "Array with 1 thread");
     }
     else { 
