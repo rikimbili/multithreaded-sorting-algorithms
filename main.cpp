@@ -398,15 +398,17 @@ int main() {
     // int arraySizes[] = { 10, 100, 1000, 10000, 100000, 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000, 250000, 500000, 750000, 1000000};
     // int arraySizes[] = { 100000, 500000, 1000000 };
     // int arraySizes[] = { 10, 100, 1000, 10000, 100000, 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000 };
+    int arraySizes[] = { 10, 100, 1000, 10000, 100000, 250000, 500000, 750000, 1000000};
+
     // Initialize heap array of size ARR_SIZE with random values
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<> dis(0, 100000);
+    uniform_int_distribution<> dis(1, 1000000);
 
-    int arraySizes[10];
-    for (int i = 0; i < 10; i++) {
-        arraySizes[i] = dis(gen);
-    }
+    // int arraySizes[10];
+    // for (int i = 0; i < 10; i++) {
+    //     arraySizes[i] = dis(gen);
+    // }
 
     sortingData.open("sortingData.csv");
     sortingData << "Sort Name,Array Size,Time Taken,CPU Usage,Number of Threads Used" << endl;
