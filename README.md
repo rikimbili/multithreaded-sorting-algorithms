@@ -14,4 +14,4 @@ The report for our milestone can be found in the milestone folder.
 
 ## Building and Running
 To build and run the project, run `cmake . && make && ./multithreaded_sorting_algorithms`
-<br> To run the Jupyter Notebook (named sortingDataAnalysis.ipynb), click "Run All" after ensuring sortingData.csv is present.
+<br> To run the Jupyter Notebook (named sortingDataAnalysis.ipynb) for data analysis, click "Run All" after ensuring sortingData.csv is present.
