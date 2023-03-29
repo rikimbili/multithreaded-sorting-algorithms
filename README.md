@@ -8,7 +8,7 @@ Team 1:
 
 ## Contents
 The report for our milestone can be found in the milestone folder.
-<br> The report we turned in can be found in the FinalReport folder.
+<br> The report we turned in can be found in the FinalReport folder. The link for it can be found at: https://www.overleaf.com/read/xcfhxhwfrhsx.
 <br> The powerpoints used for our recording and live presentation can be found in the PowerPoints folder.
 <br> Our recorded presentation can be found at: https://www.youtube.com/watch?v=ecKVKSIdcXk.
 
